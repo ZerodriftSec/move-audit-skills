@@ -1,0 +1,8 @@
+{
+    "name": "move-audit",
+    "description": "Agent-native Move security infrastructure for evaluating protocol and code risk before agents deploy, integrate, trade, or move capital on Sui, Aptos, and other Move-based blockchains.",
+    "version": "0.1.0",
+    "author": {
+        "name": "Move Audit"
+    }
+}
