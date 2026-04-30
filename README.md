@@ -2,18 +2,22 @@
 
 Agent-native Move security infrastructure for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Audits Sui and Aptos smart contracts using parallel specialist agents with depth follow-up and structured validation.
 
+## Status
+
+This repository is maintained by Zerodrift Security as the Move ecosystem skill pack for audit automation research and reviewer workflow support.
+
 ## Install
 
 In your project directory, run:
 
 ```
-npx skills add https://github.com/ZerodriftSec/move-skills
+npx skills add https://github.com/ZerodriftSec/move-audit-skills
 ```
 
 ## Architecture
 
 ```
-move-skill/
+move-audit-skills/
 ├── agents/                            ← Agent definitions
 │   │  Breadth agents (2, each covers a vulnerability domain)
 │   ├── ability-type-safety-agent.md       abilities, generics, type constraints
@@ -58,6 +62,19 @@ move-skill/
 | `agents/` | Specialist personas — breadth agents for domain coverage, depth agents for high-signal follow-up |
 | `skills/sui-move-auditor/` | Sui-specific orchestrator with banner, 26 audit modules, Sui vulnerability catalog and attack vectors |
 | `skills/aptos-move-auditor/` | Aptos-specific orchestrator with banner, 26 audit modules, Aptos vulnerability catalog and attack vectors |
+
+## Development Standards
+
+- Keep skill instructions concise, deterministic, and evidence-oriented.
+- Keep platform-specific references under `references/sui/` or `references/aptos/` rather than mixing chains in the orchestrator.
+- Prefer small shell or Node scripts for repeatable checks; document required external CLIs in the README before relying on them.
+- Use 2-space indentation for JSON/YAML/Markdown examples and POSIX-compatible shell where practical.
+
+See [STYLE.md](STYLE.md) for the repository coding and documentation conventions.
+
+## Security
+
+Report security issues or unsafe skill behavior privately to `norman@zerodrift.xyz`. Do not open public issues for exploitable findings or credential leaks.
 
 ### Audit Pipeline
 
