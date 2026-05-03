@@ -6,6 +6,10 @@ Agent-native Move security infrastructure for [Claude Code](https://docs.anthrop
 
 This repository is maintained by Zerodrift Security as the Move ecosystem skill pack for audit automation research and reviewer workflow support.
 
+## Documentation
+
+- [What is ZeroDrift?](docs/introduction.mdx) — overview page draft for `docs.zerodrift.xyz`, covering the mission and current checked-in modules.
+
 ## Install
 
 In your project directory, run:

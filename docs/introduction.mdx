@@ -1,0 +1,99 @@
+---
+title: What is ZeroDrift?
+description: Agent-native security infrastructure for Move smart contracts.
+---
+
+# What is ZeroDrift?
+
+ZeroDrift is building agent-native security infrastructure for smart contract review. The current repository focuses on Move: it packages the audit methodology, specialist agent roles, validation rules, and platform-specific vulnerability references needed to review Sui and Aptos code with more consistency than a single ad hoc prompt.
+
+The goal is simple: help reviewers and coding agents find the issues that matter, preserve the evidence chain, and turn noisy model output into structured, defensible audit findings.
+
+> ## Documentation index
+>
+> This page summarizes the checked-in modules in `ZerodriftSec/move-skills`. For full source context, see the repository README, `skills/move-auditor/SKILL.md`, agent definitions in `agents/`, and reference modules under `skills/move-auditor/references/`.
+
+## Move vulnerability detection
+
+ZeroDrift's Move audit pack is organized around an orchestrator skill, specialist agents, and focused reference modules.
+
+The orchestrator in `skills/move-auditor/SKILL.md` defines the audit flow:
+
+1. Detect whether the target project is Sui or Aptos by scanning `Move.toml` dependencies.
+2. Discover in-scope `.move` files while excluding tests, examples, docs, scripts, mocks, and test files.
+3. Bundle source code with shared Move references and platform-specific audit modules.
+4. Run specialist review passes for distinct vulnerability domains.
+5. Trigger depth follow-up when a breadth finding needs token-flow, state-trace, or edge-case analysis.
+6. Deduplicate, gate-evaluate, score confidence, and format the final report.
+
+This makes the audit process repeatable: every finding should be tied back to source behavior, validation gates, and a specific vulnerability class rather than model intuition alone.
+
+## Current modules
+
+The current repository contains one Move auditor skill, five checked-in specialist agent definitions, two common Move references, and platform-specific Sui and Aptos reference packs.
+
+### Orchestrator and scripts
+
+| Module | Purpose |
+| --- | --- |
+| `skills/move-auditor/SKILL.md` | Main audit orchestrator for Sui and Aptos Move code. |
+| `skills/move-auditor/scripts/detect-platform.py` | Detects Sui vs. Aptos projects from `Move.toml` dependencies. |
+| `skills/move-auditor/scripts/banner.sh` | Prints the Move auditor banner. |
+| `.claude-plugin/plugin.json` | Plugin metadata for installing the skill pack in Claude Code-compatible environments. |
+
+### Specialist agents
+
+| Agent | Purpose |
+| --- | --- |
+| `agents/ability-type-safety-agent.md` | Reviews struct abilities, generic constraints, witness patterns, phantom types, and capability storage risk. |
+| `agents/ownership-composability-agent.md` | Reviews Sui ownership and PTB composition risks, Aptos reentrancy/reference patterns, signer validation, and capability leakage. |
+| `agents/depth-token-flow-agent.md` | Performs targeted follow-up on balances, deposits, withdrawals, fees, dust, rounding, and accounting mismatches. |
+| `agents/depth-state-trace-agent.md` | Traces multi-function state mutations, invariant breaks, missing checks, and invalid reachable states. |
+| `agents/depth-edge-case-agent.md` | Checks boundary conditions, zero-state behavior, first/last participant flows, overflows, and division-by-zero cases. |
+
+### Common Move references
+
+| Reference | Purpose |
+| --- | --- |
+| `references/common/move-language.md` | Shared Move language reference for audit context. |
+| `references/common/move-vulnerabilities.md` | Cross-platform Move vulnerability catalog. |
+
+### Sui reference pack
+
+The Sui pack currently includes 24 modules: core vulnerabilities, Sui-specific vulnerabilities, attack vectors, ability analysis, type safety, object ownership, PTB composability, package version safety, dependency audit, centralization risk, semi-trusted roles, token-flow tracing, zero-state return, flash-loan interaction, share-allocation fairness, oracle analysis, temporal parameter staleness, migration analysis, cross-chain timing, economic design audit, external precondition audit, fork ancestry, bit-shift safety, and verification protocol.
+
+Representative Sui checks include:
+
+- Unauthorized object transfer and shared-object manipulation.
+- PTB atomic composition attacks.
+- Capability leakage through `AdminCap`, `OwnerCap`, `UpgradeCap`, or permissive abilities.
+- Dynamic field abuse and transfer policy bypass.
+- Balance-dependent donation, dust, and share-allocation edge cases.
+
+### Aptos reference pack
+
+The Aptos pack currently includes 24 modules: core vulnerabilities, Aptos-specific vulnerabilities, attack vectors, ability analysis, type safety, reentrancy analysis, reference lifecycle, FungibleAsset security, dependency audit, centralization risk, semi-trusted roles, token-flow tracing, zero-state return, flash-loan interaction, share-allocation fairness, oracle analysis, temporal parameter staleness, migration analysis, cross-chain timing, economic design audit, external precondition audit, fork ancestry, bit-shift safety, and verification protocol.
+
+Representative Aptos checks include:
+
+- Signer validation bypass and unauthorized resource access.
+- FungibleAsset `Ref` lifecycle and capability misuse.
+- Move 2.2+ dynamic-dispatch reentrancy risks.
+- Table, SmartVector, event, and auth-key edge cases.
+- Balance accounting, oracle staleness, and migration safety.
+
+## Validation and reporting
+
+ZeroDrift is designed to reduce false positives by requiring findings to survive a structured reporting path:
+
+- collect source evidence before asserting impact;
+- group duplicate findings by module, function, and bug class;
+- promote leads only when exploitability is traced, multiple agents agree, or depth analysis confirms the issue;
+- score confidence and exclude rejected items from the final report;
+- keep platform-specific reasoning in the Sui or Aptos module that owns it.
+
+The result is an audit workflow that can run inside coding agents while still matching the discipline expected from human security review: source-grounded claims, explicit assumptions, and reproducible validation steps.
+
+## Status
+
+This is an active ZeroDrift research and reviewer-support pack for Move security automation. It currently targets Sui and Aptos smart contracts and should be treated as workflow support for experienced reviewers, not a replacement for final human judgment.
